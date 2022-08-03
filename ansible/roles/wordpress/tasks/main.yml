@@ -1,0 +1,60 @@
+# roles/wordpress/tasks/install.yml
+---
+- name: Install epel repo
+  command: amazon-linux-extras install
+
+- name: Enable EPEL
+  command: amazon-linux-extras enable epel
+
+- name: Enable php74
+  command: amazon-linux-extras enable php7.4
+
+- name: Yum clean metadata
+  command: yum clean metadata
+   
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ wordpress_packages }}"
+  
+- name: Download Wodpress
+  get_url: 
+    url: http://www.wordpress.org/latest.tar.gz  
+    dest: /tmp/wordpress.tar
+
+- name: Extracting wordpress contents
+  unarchive: 
+     src: /tmp/wordpress.tar 
+     dest: /tmp/  
+     remote_src: yes
+
+- name: Copy wordpress contents
+  shell: "cp -r /tmp/wordpress/*  /var/www/html/"
+
+- name: Change Doc-root permission
+  shell: 'chown -R apache:apache /var/www/html/'
+
+- name: Wordpress config file
+  template:
+    src: wp-config.php.j2
+    dest: "{{ wordpress_configuration }}"
+    owner: apache
+    group: apache
+    mode: '0640'
+
+- name: Remove Wordpress.tar
+  file:
+     path: /tmp/wordpress.tar 
+     state: absent
+
+- name: Remove Wodpress Extracted Directory
+  file: 
+     path: /tmp/wordpress 
+     state: absent
+
+- name: Start and enable apache
+  service: 
+    name: httpd
+    state: restarted
+    enabled: yes

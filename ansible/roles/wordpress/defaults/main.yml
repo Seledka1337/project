@@ -1,0 +1,21 @@
+# roles/wordpress/defaults/main.yml
+---
+wordpress_database_host: terraform-20220731204340351100000001.ccrdrhqhlgw0.us-east-1.rds.amazonaws.com #replace with RDS endpoint
+wordpress_database: project_db
+wordpress_user: admin
+wordpress_password: adminadmin  #replace with RDS password
+wordpress_force_ssl: false
+wordpress_allow_file_mods: true
+wordpress_automatic_updates: false
+wordpress_debug: false  
+wordpress_packages:
+  - httpd
+  - mysql
+  - python-pip
+  - gcc
+  - mysql-devel
+  - php
+  - php-mysqlnd
+  - php-mbstring
+wordpress_directory: '/var/www/html'
+wordpress_configuration: '/var/www/html/wp-config.php'

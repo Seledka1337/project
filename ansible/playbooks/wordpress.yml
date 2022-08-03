@@ -1,0 +1,9 @@
+---
+ - name: deploy wordpress
+   hosts: all
+   become: True
+   ignore_errors: True
+   #serial: 1
+   gather_facts: False
+   roles:
+    - wordpress
