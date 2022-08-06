@@ -1,4 +1,4 @@
-/*
+
 # Create vpc
 module "vpc" {
   source     = "./modules/vpc"
@@ -13,24 +13,26 @@ module "public_subnets" {
 
 }
 
+/*
 # Create private subnets
 module "private_subnets" {
   source     = "./modules/private_subnet"
   cidr_block = ["10.10.11.0/24", "10.10.12.0/24"]
   vpc_id     = module.vpc.vpc_id
 }
+*/
 # Create IGW
 module "igw" {
   source = "./modules/igw"
   vpc_id = module.vpc.vpc_id
 }
-
+/*
 # Create NAT
 module "natgtw" {
   source    = "./modules/natgw"
   subnet_id = module.public_subnets.public_subnet_id[0]
 }
-
+*/
 # Create public route data "aws_qldb_ledger" "example" {
 module "public_route_table" {
   source = "./modules/public_route_table"
@@ -44,7 +46,7 @@ module "rtb_public_subnet_association" {
   subnet_id      = module.public_subnets.public_subnet_id[*]
   route_table_id = module.public_route_table.public_route_table_id
 }
-
+/*
 # Create Private rt
 module "private_route_table" {
   source   = "./modules/private_route_table"
@@ -58,6 +60,7 @@ module "rtb_private_subnet_association" {
   subnet_id      = module.private_subnets.private_subnet_id[*]
   route_table_id = module.private_route_table.private_route_table_id
 }
+*/
 
 # Create sg for ALB
 module "alb_sg" {
@@ -86,6 +89,11 @@ module "alb_sg_egress_rules" {
     "0" = ["0.0.0.0/0", "0", "65535", "TCP", "allow outbound traffic to www"]
   }
   security_group_id = module.alb_sg.alb_sg_id
+}
+
+# create key_pair:
+module "key_pair" {
+  source = "./modules/key_pair"
 }
 
 #Create sg for ec2
@@ -129,11 +137,12 @@ module "ec2_sg_egress_rules" {
 # Create EC2
 module "ec2" {
   source                = "./modules/ec2"
-  subnet_id             = module.private_subnets.private_subnet_id[*]
+  subnet_id             = module.public_subnets.public_subnet_id[*]
   vpc_security_group_id = [module.ec2_sg.security_group_id]
+  key_pair              = module.key_pair.key_name
 
   depends_on = [
-    module.natgtw
+    module.igw
   ]
 }
 
@@ -161,7 +170,7 @@ module "alb" {
 # Create db subnet group
 module "db_subnet_group" {
   source = "./modules/subnet_group"
-  subnet_id = module.private_subnets.private_subnet_id[*]
+  subnet_id = module.public_subnets.public_subnet_id[*]
 }
 
 # Create DB subnet group
@@ -204,4 +213,13 @@ module "dns_record" {
   source = "./modules/dns"
   alb_dns_name = [module.alb.alb_dns_name]
 }
-*/
+
+#get public IP of EC2
+output "ec2_public_ip" {
+  value = module.ec2[*].public_ip
+}
+
+# Get RDS endpoint
+output "rds_endpoint" {
+  value = module.db.rds_endpoint
+}
