@@ -2,7 +2,7 @@
 
 # get public IPs of running EC2 instances and append to ansible hosts file:
 cd ~/workspace/project/terraform
-echo -e "\n$(terraform output --json | jq -r .ec2_public_ip.value[][])" >>~/workspace/project/ansible/inventory/hosts
+echo -e "\n$(terraform output --json | jq -r .ec2_public_ip.value[][])" >> ~/workspace/project/ansible/inventory/hosts
 
 # get RDS endpoint and save it as a var to be later sed to wp-config.php:
 rds_endpoint=$(terraform output --json | jq -r .rds_endpoint.value | cut -d ':' -f 1)
