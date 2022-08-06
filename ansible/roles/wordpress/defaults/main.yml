@@ -1,6 +1,6 @@
 # roles/wordpress/defaults/main.yml
 ---
-wordpress_database_host: terraform-20220806205049482000000001.ccrdrhqhlgw0.us-east-1.rds.amazonaws.com #replace with RDS endpoint
+wordpress_database_host: rds_host #replace with RDS endpoint
 wordpress_database: project_db
 wordpress_user: admin
 wordpress_password: adminadmin  #replace with RDS password
