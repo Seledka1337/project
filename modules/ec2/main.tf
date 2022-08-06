@@ -13,7 +13,7 @@ resource "aws_instance" "ec2" {
   ami                    = data.aws_ami.amazone_linux_ami.id
   instance_type          = "t2.micro"
   subnet_id              = var.subnet_id[count.index]
-  key_name               = "demm"
+  key_name               = var.key_pair
   vpc_security_group_ids = var.vpc_security_group_id
   tags = {
     Name = "project_ec2_${count.index + 1}"

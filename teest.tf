@@ -91,6 +91,11 @@ module "alb_sg_egress_rules" {
   security_group_id = module.alb_sg.alb_sg_id
 }
 
+# create key_pair:
+module "key_pair" {
+  source = "./modules/key_pair"
+}
+
 #Create sg for ec2
 module "ec2_sg" {
   source  = "./modules/security_group"
@@ -134,6 +139,7 @@ module "ec2" {
   source                = "./modules/ec2"
   subnet_id             = module.public_subnets.public_subnet_id[*]
   vpc_security_group_id = [module.ec2_sg.security_group_id]
+  key_pair              = module.key_pair.key_name
 
   depends_on = [
     module.igw
