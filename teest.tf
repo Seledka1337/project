@@ -207,3 +207,13 @@ module "dns_record" {
   source = "./modules/dns"
   alb_dns_name = [module.alb.alb_dns_name]
 }
+
+#get public IP of EC2
+output "ec2_public_ip" {
+  value = module.ec2[*].public_ip
+}
+
+# Get RDS endpoint
+output "rds_endpoint" {
+  value = module.db.rds_endpoint
+}
