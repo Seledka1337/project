@@ -40,7 +40,7 @@ pipeline {
 
       stage('Handle Terraforms output') {
         steps {
-          sh './scripts/handle_output.sh'
+          sh 'scripts/handle_output.sh'
         }
       }
 
