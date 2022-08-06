@@ -47,7 +47,7 @@ pipeline {
       stage('Execute Ansible') {
         steps {
           dir('ansible') {
-            sh 'ansible-playbook ./ansible/playbooks/wordpress.yml'
+            sh 'ansible-playbook ./playbooks/wordpress.yml'
           }
         }
       }
